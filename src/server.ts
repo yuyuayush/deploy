@@ -5,9 +5,9 @@ import { logger } from './utils/logger.js';
 const app = createApp();
 
 const server = app.listen(env.PORT, () => {
-  logger.info(`🚀 Server running in [${env.NODE_ENV}] mode on port ${env.PORT}`);
-  logger.info(`👉 API Endpoint: http://localhost:${env.PORT}${env.API_PREFIX}`);
-  logger.info(`👉 Healthcheck:  http://localhost:${env.PORT}/health`);
+  logger.info(`Server running in [${env.NODE_ENV}] mode on port ${env.PORT}`);
+  logger.info(`API Endpoint: http://localhost:${env.PORT}${env.API_PREFIX}`);
+  logger.info(`Healthcheck:  http://localhost:${env.PORT}/health`);
 });
 
 // Graceful Shutdown handling
