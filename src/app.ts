@@ -38,9 +38,9 @@ export const createApp = (): Application => {
   app.use('/health', healthRouter);
 
   // API v1 Routes
-  // const apiRouter = express.Router();
-  // apiRouter.use('/health', healthRouter);
-  // apiRouter.use('/users', userRouter);
+  const apiRouter = express.Router();
+  apiRouter.use('/health', healthRouter);
+  apiRouter.use('/users', userRouter);
 
   app.use(env.API_PREFIX, apiRouter);
 
