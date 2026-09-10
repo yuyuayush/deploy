@@ -1,6 +1,7 @@
 {
   "name": "node-backend-professional",
   "version": "1.0.0",
+  "type": "module",
   "description": "Professional production-ready Node.js backend using TypeScript, Express, Zod, and Pino",
   "main": "dist/server.js",
   "scripts": {
