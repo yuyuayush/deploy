@@ -1,6 +1,8 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './lib/auth.js';
 import { env } from './config/env.js';
 import { httpLogger } from './middlewares/logger.middleware.js';
 import { globalRateLimiter } from './middlewares/rate-limiter.js';
@@ -12,15 +14,19 @@ export const createApp = (): Application => {
   const app: Application = express();
 
   // Security headers
-  app.use(helmet());
+  app.use(helmet({ contentSecurityPolicy: false }));
 
-  // CORS setup
+  // CORS setup for Frontend Communication
   app.use(
     cors({
-      origin: env.CORS_ORIGIN,
+      origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
       credentials: true,
     })
   );
+
+  // Better Auth Handler (MUST BE MOUNTED BEFORE JSON BODY PARSERS)
+  app.all('/api/auth/*', toNodeHandler(auth));
+  app.all('/api/v1/auth/*', toNodeHandler(auth));
 
   // Rate Limiting
   app.use(globalRateLimiter);

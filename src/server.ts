@@ -1,13 +1,18 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
+import { runMigrations } from './db/migrate.js';
 
 const app = createApp();
 
-const server = app.listen(env.PORT, () => {
-  logger.info(`🚀 Server running in [${env.NODE_ENV}] mode on port ${env.PORT}`);
-  logger.info(`👉 API Endpoint: http://localhost:${env.PORT}${env.API_PREFIX}`);
-  logger.info(`👉 Healthcheck:  http://localhost:${env.PORT}/health`);
+const server = app.listen(env.PORT, async () => {
+
+  logger.info(` Server running in [${env.NODE_ENV}] mode on port ${env.PORT}`);
+  logger.info(` API Endpoint: http://localhost:${env.PORT}${env.API_PREFIX}`);
+  logger.info(` Healthcheck:  http://localhost:${env.PORT}/health`);
+
+  // Run database migration check
+  await runMigrations();
 });
 
 // Graceful Shutdown handling
