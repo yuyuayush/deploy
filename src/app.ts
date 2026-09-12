@@ -9,9 +9,13 @@ import { globalRateLimiter } from './middlewares/rate-limiter.js';
 import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js';
 import { healthRouter } from './modules/health/health.router.js';
 import { userRouter } from './modules/users/user.router.js';
+import { postRouter } from './modules/posts/post.router.js';
 
 export const createApp = (): Application => {
   const app: Application = express();
+
+  // Trust proxy for IP forwarding
+  app.set('trust proxy', true);
 
   // Security headers
   app.use(helmet({ contentSecurityPolicy: false }));
@@ -47,6 +51,7 @@ export const createApp = (): Application => {
   const apiRouter = express.Router();
   apiRouter.use('/health', healthRouter);
   apiRouter.use('/users', userRouter);
+  apiRouter.use('/posts', postRouter);
 
   app.use(env.API_PREFIX, apiRouter);
 

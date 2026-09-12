@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, integer } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -44,4 +44,16 @@ export const verification = pgTable('verification', {
   expiresAt: timestamp('expiresAt').notNull(),
   createdAt: timestamp('createdAt').defaultNow(),
   updatedAt: timestamp('updatedAt').defaultNow(),
+});
+
+export const post = pgTable('post', {
+  id: text('id').primaryKey(),
+  authorName: text('authorName').notNull(),
+  authorRole: text('authorRole').notNull().default('user'),
+  authorEmail: text('authorEmail').notNull(),
+  content: text('content').notNull(),
+  likes: integer('likes').notNull().default(0),
+  commentsCount: integer('commentsCount').notNull().default(0),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });

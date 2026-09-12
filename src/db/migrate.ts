@@ -3,7 +3,7 @@ import { logger } from '../utils/logger.js';
 
 export async function runMigrations() {
   try {
-    logger.info('🔄 Verifying and syncing Neon PostgreSQL schema for Better Auth...');
+    logger.info('🔄 Verifying and syncing Neon PostgreSQL schema for Better Auth & Posts...');
 
     const client = await pool.connect();
     try {
@@ -67,6 +67,21 @@ export async function runMigrations() {
           "expiresAt" timestamp NOT NULL,
           "createdAt" timestamp DEFAULT now(),
           "updatedAt" timestamp DEFAULT now()
+        );
+      `);
+
+      // 6. Create post table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS "post" (
+          "id" text PRIMARY KEY NOT NULL,
+          "authorName" text NOT NULL,
+          "authorRole" text DEFAULT 'user' NOT NULL,
+          "authorEmail" text NOT NULL,
+          "content" text NOT NULL,
+          "likes" integer DEFAULT 0 NOT NULL,
+          "commentsCount" integer DEFAULT 0 NOT NULL,
+          "createdAt" timestamp DEFAULT now() NOT NULL,
+          "updatedAt" timestamp DEFAULT now() NOT NULL
         );
       `);
 
