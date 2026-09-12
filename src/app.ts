@@ -14,16 +14,24 @@ import { postRouter } from './modules/posts/post.router.js';
 export const createApp = (): Application => {
   const app: Application = express();
 
-  // Trust proxy for IP forwarding
-  app.set('trust proxy', true);
-
   // Security headers
   app.use(helmet({ contentSecurityPolicy: false }));
 
-  // CORS setup for Frontend Communication
+  // CORS setup for Frontend Communication (local & production origins)
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    ...(env.CORS_ORIGIN ? env.CORS_ORIGIN.split(',').map((o) => o.trim()) : []),
+  ];
+
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*') || origin.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+        return callback(null, true);
+      },
       credentials: true,
     })
   );
