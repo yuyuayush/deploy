@@ -44,7 +44,7 @@ const envSchema = z.object({
   REDIS_URL: z.string().default('redis://127.0.0.1:6379'),
 
   // Resend Email Configuration
-  RESEND_API_KEY: z.string().optional().default('re_JThpDmQN_uUAHFhdNgHFmJjkxenbnH864'),
+  RESEND_API_KEY: z.string().optional().default(''),
   RESEND_FROM_EMAIL: z.string().default('onboarding@resend.dev'),
 });
 
