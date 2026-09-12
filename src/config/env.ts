@@ -45,7 +45,7 @@ const envSchema = z.object({
 
   // Resend Email Configuration
   RESEND_API_KEY: z.string().optional().default(''),
-  RESEND_FROM_EMAIL: z.string().default('onboarding@resend.dev'),
+  RESEND_FROM_EMAIL: z.string().default(''),
 });
 
 const parseEnv = () => {
