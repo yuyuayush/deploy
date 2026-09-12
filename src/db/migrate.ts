@@ -1,8 +1,9 @@
 import { pool } from './index.js';
+import { logger } from '../utils/logger.js';
 
 export async function runMigrations() {
   try {
-    console.log('🔄 Verifying and syncing Neon PostgreSQL schema for Better Auth...');
+    logger.info('🔄 Verifying and syncing Neon PostgreSQL schema for Better Auth...');
 
     const client = await pool.connect();
     try {
@@ -69,11 +70,11 @@ export async function runMigrations() {
         );
       `);
 
-      console.log('✅ Neon PostgreSQL database schema successfully verified and synced!');
+      logger.info('✅ Neon PostgreSQL database schema successfully verified and synced!');
     } finally {
       client.release();
     }
   } catch (error) {
-    console.log('ℹ️ Schema sync notice:', error instanceof Error ? error.message : error);
+    logger.info('ℹ️ Schema sync notice: ' + (error instanceof Error ? error.message : String(error)));
   }
 }
