@@ -4,6 +4,7 @@ import { Post, CreatePostInput } from './post.types.js';
 import { ApiError } from '../../utils/api-error.js';
 import { desc, eq } from 'drizzle-orm';
 import { logger } from '../../utils/logger.js';
+import { enqueuePostLikeEmail } from '../../queues/email.queue.js';
 
 export class PostService {
   public async getAllPosts(): Promise<Post[]> {
@@ -67,7 +68,13 @@ export class PostService {
     }
   }
 
-  public async toggleLike(id: string, increment: boolean = true): Promise<Post> {
+  public async toggleLike(
+    id: string,
+    increment: boolean = true,
+    likerInfo?: { name?: string; email?: string }
+  ): Promise<Post> {
+    let postToReturn: Post;
+
     try {
       const [existing] = await db.select().from(postTable).where(eq(postTable.id, id));
       if (!existing) {
@@ -80,12 +87,13 @@ export class PostService {
         .where(eq(postTable.id, id))
         .returning();
 
-      return {
+      postToReturn = {
         ...updated,
         createdAt: updated.createdAt.toISOString(),
         updatedAt: updated.updatedAt.toISOString(),
       };
     } catch (err) {
+      if (err instanceof ApiError) throw err;
       const res = await pool.query(
         'UPDATE "post" SET "likes" = GREATEST(0, "likes" + $1), "updatedAt" = NOW() WHERE "id" = $2 RETURNING *',
         [increment ? 1 : -1, id]
@@ -94,7 +102,7 @@ export class PostService {
         throw ApiError.notFound(`Post '${id}' not found`);
       }
       const p = res.rows[0];
-      return {
+      postToReturn = {
         id: p.id,
         authorName: p.authorName,
         authorRole: p.authorRole,
@@ -106,5 +114,20 @@ export class PostService {
         updatedAt: new Date(p.updatedAt).toISOString(),
       };
     }
+
+    // Trigger BullMQ post-like email notification asynchronously if incrementing
+    if (increment && postToReturn.authorEmail) {
+      enqueuePostLikeEmail({
+        recipientEmail: postToReturn.authorEmail,
+        recipientName: postToReturn.authorName || 'Developer',
+        likerName: likerInfo?.name || 'A community member',
+        postContent: postToReturn.content,
+        postId: postToReturn.id,
+      }).catch((emailErr) => {
+        logger.error('[LIKE EMAIL NOTICE] Failed to queue like notification:', emailErr);
+      });
+    }
+
+    return postToReturn;
   }
 }

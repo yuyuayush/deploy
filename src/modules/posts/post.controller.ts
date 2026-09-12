@@ -34,7 +34,12 @@ export class PostController {
   ): Promise<void> => {
     try {
       const increment = req.body?.increment !== false;
-      const updatedPost = await this.postService.toggleLike(req.params.id, increment);
+      const likerName = req.body?.likerName;
+      const likerEmail = req.body?.likerEmail;
+      const updatedPost = await this.postService.toggleLike(req.params.id, increment, {
+        name: likerName,
+        email: likerEmail,
+      });
       ApiResponse.success(res, updatedPost, 'Post like updated successfully');
     } catch (error) {
       next(error);

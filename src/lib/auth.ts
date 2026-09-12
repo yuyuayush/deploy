@@ -3,9 +3,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '../db/index.js';
 import * as schema from '../db/schema.js';
 import { env } from '../config/env.js';
+import { enqueueWelcomeEmail } from '../queues/email.queue.js';
+import { logger } from '../utils/logger.js';
 
 /**
- * Backend Better Auth Instance integrated with Drizzle ORM & Neon PostgreSQL
+ * Backend Better Auth Instance integrated with Drizzle ORM, Neon PostgreSQL & BullMQ Queue System
  */
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,6 +16,23 @@ export const auth = betterAuth({
       ...schema,
     },
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          logger.info(`[SIGNUP HOOK] New user registered: ${user.email}. Triggering welcome email queue...`);
+          try {
+            await enqueueWelcomeEmail({
+              email: user.email,
+              name: user.name || 'Developer',
+            });
+          } catch (err) {
+            logger.error({ err }, '[SIGNUP HOOK NOTICE] Failed to enqueue welcome email');
+          }
+        },
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,

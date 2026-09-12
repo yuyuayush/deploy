@@ -39,6 +39,13 @@ const envSchema = z.object({
   // Google OAuth Credentials
   GOOGLE_CLIENT_ID: z.string().default('sample_google_client_id.apps.googleusercontent.com'),
   GOOGLE_CLIENT_SECRET: z.string().default('sample_google_client_secret'),
+
+  // Redis & BullMQ Configuration
+  REDIS_URL: z.string().default('redis://127.0.0.1:6379'),
+
+  // Resend Email Configuration
+  RESEND_API_KEY: z.string().optional().default('re_JThpDmQN_uUAHFhdNgHFmJjkxenbnH864'),
+  RESEND_FROM_EMAIL: z.string().default('onboarding@resend.dev'),
 });
 
 const parseEnv = () => {
