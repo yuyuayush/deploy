@@ -20,7 +20,9 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          logger.info(`[SIGNUP HOOK] New user registered: ${user.email}. Triggering welcome email queue...`);
+          logger.info(
+            `[SIGNUP HOOK] New user registered: ${user.email}. Triggering welcome email queue...`
+          );
           try {
             await enqueueWelcomeEmail({
               email: user.email,

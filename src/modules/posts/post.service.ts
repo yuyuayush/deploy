@@ -16,7 +16,10 @@ export class PostService {
         updatedAt: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString(),
       }));
     } catch (err) {
-      logger.info('Falling back to pool query for posts: ' + (err instanceof Error ? err.message : String(err)));
+      logger.info(
+        'Falling back to pool query for posts: ' +
+          (err instanceof Error ? err.message : String(err))
+      );
       const res = await pool.query('SELECT * FROM "post" ORDER BY "createdAt" DESC');
       return res.rows.map((p) => ({
         id: p.id,
@@ -55,10 +58,23 @@ export class PostService {
         updatedAt: inserted.updatedAt.toISOString(),
       };
     } catch (err) {
-      logger.info('Falling back to pool insert for posts: ' + (err instanceof Error ? err.message : String(err)));
+      logger.info(
+        'Falling back to pool insert for posts: ' +
+          (err instanceof Error ? err.message : String(err))
+      );
       await pool.query(
         'INSERT INTO "post" ("id", "authorName", "authorRole", "authorEmail", "content", "likes", "commentsCount", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-        [id, input.authorName, input.authorRole || 'user', input.authorEmail, input.content, 0, 0, now, now]
+        [
+          id,
+          input.authorName,
+          input.authorRole || 'user',
+          input.authorEmail,
+          input.content,
+          0,
+          0,
+          now,
+          now,
+        ]
       );
       return {
         ...newPostData,

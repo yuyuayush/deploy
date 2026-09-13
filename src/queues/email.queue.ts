@@ -26,7 +26,9 @@ export function getEmailQueue(): Queue | null {
       });
 
       emailQueueInstance.on('error', (err) => {
-        logger.info(`[BULLMQ QUEUE NOTICE] Local Redis notice (${err.message}). Using direct async email mode.`);
+        logger.info(
+          `[BULLMQ QUEUE NOTICE] Local Redis notice (${err.message}). Using direct async email mode.`
+        );
       });
     } catch (err) {
       logger.info(`[BULLMQ INIT NOTICE] Redis unavailable: ${err}`);
@@ -48,7 +50,9 @@ export async function enqueueWelcomeEmail(payload: WelcomeEmailInput): Promise<v
       logger.info(`[BULLMQ ENQUEUED] Welcome email job queued for ${payload.email}`);
       return;
     } catch (err) {
-      logger.info(`[BULLMQ ENQUEUE NOTICE] Redis offline. Dispatching email directly for ${payload.email}`);
+      logger.info(
+        `[BULLMQ ENQUEUE NOTICE] Redis offline. Dispatching email directly for ${payload.email}`
+      );
     }
   }
 
@@ -56,7 +60,10 @@ export async function enqueueWelcomeEmail(payload: WelcomeEmailInput): Promise<v
   try {
     await directEmailService.sendWelcomeEmail(payload);
   } catch (directErr) {
-    logger.error({ err: directErr }, `[DIRECT EMAIL ERROR] Failed to send email to ${payload.email}`);
+    logger.error(
+      { err: directErr },
+      `[DIRECT EMAIL ERROR] Failed to send email to ${payload.email}`
+    );
   }
 }
 
@@ -72,7 +79,9 @@ export async function enqueuePostLikeEmail(payload: PostLikeEmailInput): Promise
       logger.info(`[BULLMQ ENQUEUED] Post like email job queued for ${payload.recipientEmail}`);
       return;
     } catch (err) {
-      logger.info(`[BULLMQ ENQUEUE NOTICE] Redis offline. Dispatching post like email directly to ${payload.recipientEmail}`);
+      logger.info(
+        `[BULLMQ ENQUEUE NOTICE] Redis offline. Dispatching post like email directly to ${payload.recipientEmail}`
+      );
     }
   }
 
@@ -80,6 +89,9 @@ export async function enqueuePostLikeEmail(payload: PostLikeEmailInput): Promise
   try {
     await directEmailService.sendPostLikeEmail(payload);
   } catch (directErr) {
-    logger.error({ err: directErr }, `[DIRECT EMAIL ERROR] Failed to send post like email to ${payload.recipientEmail}`);
+    logger.error(
+      { err: directErr },
+      `[DIRECT EMAIL ERROR] Failed to send post like email to ${payload.recipientEmail}`
+    );
   }
 }

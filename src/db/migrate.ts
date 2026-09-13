@@ -90,6 +90,8 @@ export async function runMigrations() {
       client.release();
     }
   } catch (error) {
-    logger.info('ℹ️ Schema sync notice: ' + (error instanceof Error ? error.message : String(error)));
+    logger.info(
+      'ℹ️ Schema sync notice: ' + (error instanceof Error ? error.message : String(error))
+    );
   }
 }

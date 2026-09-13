@@ -13,8 +13,8 @@ const envSchema = z.object({
     .refine((val) => val > 0 && val < 65536, {
       message: 'PORT must be a valid port number (1-65535)',
     }),
-  API_PREFIX: z.string(),
-  CORS_ORIGIN: z.string(),
+  API_PREFIX: z.string().default('/api/v1'),
+  CORS_ORIGIN: z.string().default('http://localhost:3000'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   RATE_LIMIT_WINDOW_MS: z
     .string()
@@ -26,18 +26,18 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10)),
 
   // Database Connection
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.string().default('postgresql://postgres:postgres@localhost:5432/neondb'),
 
   // Better Auth Configuration
-  BETTER_AUTH_SECRET: z.string(),
-  BETTER_AUTH_URL: z.string(),
+  BETTER_AUTH_SECRET: z.string().default('default_better_auth_secret_32_characters_long'),
+  BETTER_AUTH_URL: z.string().default('http://localhost:8080'),
 
   // Google OAuth Credentials
-  GOOGLE_CLIENT_ID: z.string(),
-  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string().default('default_google_client_id'),
+  GOOGLE_CLIENT_SECRET: z.string().default('default_google_client_secret'),
 
   // Redis & BullMQ Configuration
-  REDIS_URL: z.string(),
+  REDIS_URL: z.string().default('redis://localhost:6379'),
 
   // Resend Email Configuration
   RESEND_API_KEY: z.string().optional().default(''),

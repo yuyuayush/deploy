@@ -55,7 +55,10 @@ export class EmailService {
    * Generates a sleek HTML email template for post like notifications
    */
   private generatePostLikeTemplate(input: PostLikeEmailInput): string {
-    const previewText = input.postContent.length > 80 ? input.postContent.substring(0, 80) + '...' : input.postContent;
+    const previewText =
+      input.postContent.length > 80
+        ? input.postContent.substring(0, 80) + '...'
+        : input.postContent;
     return `
       <!DOCTYPE html>
       <html>
@@ -117,7 +120,9 @@ export class EmailService {
         const data = (await res.json()) as Record<string, unknown>;
 
         if (res.ok) {
-          logger.info(`[RESEND SUCCESS] Welcome email delivered to ${input.email} (ID: ${data.id})`);
+          logger.info(
+            `[RESEND SUCCESS] Welcome email delivered to ${input.email} (ID: ${data.id})`
+          );
           return true;
         }
 
@@ -163,7 +168,9 @@ export class EmailService {
         const data = (await res.json()) as Record<string, unknown>;
 
         if (res.ok) {
-          logger.info(`[RESEND SUCCESS] Post like email delivered to ${input.recipientEmail} (ID: ${data.id})`);
+          logger.info(
+            `[RESEND SUCCESS] Post like email delivered to ${input.recipientEmail} (ID: ${data.id})`
+          );
           return true;
         }
 
@@ -182,4 +189,3 @@ export class EmailService {
     return true;
   }
 }
-
