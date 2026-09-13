@@ -23,7 +23,7 @@ export class NotificationController {
 
   public async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       await notificationService.markAsRead(id);
       ApiResponse.success(
         res,
@@ -38,7 +38,13 @@ export class NotificationController {
 
   public async markAllAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const recipientEmail = (req.body?.recipientEmail || req.query.email) as string;
+      const recipientEmail =
+        typeof req.body?.recipientEmail === 'string'
+          ? req.body.recipientEmail
+          : typeof req.query.email === 'string'
+            ? req.query.email
+            : undefined;
+
       if (!recipientEmail) {
         ApiResponse.error(res, 'recipientEmail is required', HttpStatus.BAD_REQUEST);
         return;
