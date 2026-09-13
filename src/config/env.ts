@@ -42,6 +42,10 @@ const envSchema = z.object({
   // Resend Email Configuration
   RESEND_API_KEY: z.string().optional().default(''),
   RESEND_FROM_EMAIL: z.string().default(''),
+  RESEND_WEBHOOK_SECRET: z
+    .string()
+    .optional()
+    .default('whsec_L6+LZukAntKzind7GL63wnf35srrVifM'),
 });
 
 const parseEnv = () => {

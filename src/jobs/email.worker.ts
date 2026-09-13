@@ -20,6 +20,8 @@ export function initEmailWorker(): Worker | null {
           await emailService.sendWelcomeEmail(job.data as WelcomeEmailInput);
         } else if (job.name === 'send-post-like-email') {
           await emailService.sendPostLikeEmail(job.data as PostLikeEmailInput);
+        } else if (job.name === 'send-delayed-test-email') {
+          await emailService.sendDelayedTestEmail(job.data as WelcomeEmailInput);
         }
       },
       {

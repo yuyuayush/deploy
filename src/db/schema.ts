@@ -76,3 +76,11 @@ export const notification = pgTable('notification', {
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
 
+export const unsubscribe = pgTable('unsubscribe', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  reason: text('reason'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+
+
