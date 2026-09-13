@@ -5,6 +5,9 @@ import { ApiError } from '../../utils/api-error.js';
 import { desc, eq } from 'drizzle-orm';
 import { logger } from '../../utils/logger.js';
 import { enqueuePostLikeEmail } from '../../queues/email.queue.js';
+import { NotificationService } from '../notifications/notification.service.js';
+
+const notificationService = new NotificationService();
 
 export class PostService {
   public async getAllPosts(): Promise<Post[]> {
@@ -131,8 +134,28 @@ export class PostService {
       };
     }
 
-    // Trigger BullMQ post-like email notification asynchronously if incrementing
+    // Trigger BullMQ post-like email notification & create in-app notification asynchronously if incrementing
     if (increment && postToReturn.authorEmail) {
+      const likerName = likerInfo?.name || 'A developer';
+      const snippet =
+        postToReturn.content.length > 50
+          ? `${postToReturn.content.substring(0, 50)}...`
+          : postToReturn.content;
+
+      notificationService
+        .createNotification({
+          recipientEmail: postToReturn.authorEmail,
+          senderName: likerName,
+          senderEmail: likerInfo?.email,
+          type: 'like',
+          postId: postToReturn.id,
+          postContent: postToReturn.content,
+          message: `${likerName} liked your post: "${snippet}"`,
+        })
+        .catch((notifErr) => {
+          logger.error('[NOTIFICATION NOTICE] Failed to create in-app notification:', notifErr);
+        });
+
       enqueuePostLikeEmail({
         recipientEmail: postToReturn.authorEmail,
         recipientName: postToReturn.authorName || 'Developer',

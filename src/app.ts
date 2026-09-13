@@ -32,7 +32,26 @@ export const createApp = (): Application => {
     app.use(httpLogger);
   }
 
-  // 5. Healthcheck Route
+  // 5. Root & Healthcheck Routes
+  app.get('/', (_req, res) => {
+    res.json({
+      success: true,
+      message: 'Professional Node.js Backend API is running',
+      environment: env.NODE_ENV,
+      version: '1.0.0',
+      endpoints: {
+        health: '/health',
+        api: env.API_PREFIX,
+      },
+    });
+  });
+  app.get(env.API_PREFIX, (_req, res) => {
+    res.json({
+      success: true,
+      message: `API Base Endpoint (${env.API_PREFIX})`,
+      version: '1.0.0',
+    });
+  });
   app.use('/health', healthRouter);
 
   // 6. Centralized API v1 Routes

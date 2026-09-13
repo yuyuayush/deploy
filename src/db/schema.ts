@@ -61,3 +61,18 @@ export const post = pgTable('post', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
+
+export const notification = pgTable('notification', {
+  id: text('id').primaryKey(),
+  recipientEmail: text('recipientEmail').notNull(),
+  senderName: text('senderName').notNull(),
+  senderEmail: text('senderEmail'),
+  type: text('type').notNull(),
+  postId: text('postId'),
+  postContent: text('postContent'),
+  message: text('message').notNull(),
+  read: boolean('read').notNull().default(false),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
