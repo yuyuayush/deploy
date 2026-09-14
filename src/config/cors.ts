@@ -1,22 +1,29 @@
 import { CorsOptions } from 'cors';
 import { env } from './env.js';
 
-const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
-const configuredOrigins = env.CORS_ORIGIN ? env.CORS_ORIGIN.split(',').map((o) => o.trim()) : [];
 
-export const allowedOrigins = Array.from(new Set([...defaultOrigins, ...configuredOrigins]));
+const configuredOrigins = env.CORS_ORIGIN
+  ? env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
+
+export const allowedOrigins = Array.from(new Set([...configuredOrigins]));
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    if (
-      !origin ||
-      allowedOrigins.includes(origin) ||
-      allowedOrigins.includes('*') ||
-      origin.endsWith('.vercel.app')
-    ) {
+    // Allow server-to-server or non-browser requests (no origin header)
+    if (!origin) {
       return callback(null, true);
     }
-    return callback(null, true);
+
+    const isAllowed = allowedOrigins.includes(origin) || allowedOrigins.includes('*');
+    // Allow any Vercel domain or preview deployment (.vercel.app)
+    const isVercel = /\.vercel\.app$/.test(origin);
+
+    if (isAllowed || isVercel) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} blocked by CORS policy`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

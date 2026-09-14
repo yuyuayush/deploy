@@ -16,6 +16,11 @@ const envSchema = z.object({
   API_PREFIX: z.string().default('/api/v1'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  LOG_PRETTY: z
+    .string()
+    .optional()
+    .transform((val) => (val !== undefined ? val.toLowerCase() !== 'false' && val !== '0' : true))
+    .default('true'),
   RATE_LIMIT_WINDOW_MS: z
     .string()
     .default('900000')

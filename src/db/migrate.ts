@@ -85,6 +85,33 @@ export async function runMigrations() {
         );
       `);
 
+      // 7. Create notification table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS "notification" (
+          "id" text PRIMARY KEY NOT NULL,
+          "recipientEmail" text NOT NULL,
+          "senderName" text NOT NULL,
+          "senderEmail" text,
+          "type" text NOT NULL,
+          "postId" text,
+          "postContent" text,
+          "message" text NOT NULL,
+          "read" boolean DEFAULT false NOT NULL,
+          "createdAt" timestamp DEFAULT now() NOT NULL,
+          "updatedAt" timestamp DEFAULT now() NOT NULL
+        );
+      `);
+
+      // 8. Create unsubscribe table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS "unsubscribe" (
+          "id" text PRIMARY KEY NOT NULL,
+          "email" text NOT NULL UNIQUE,
+          "reason" text,
+          "createdAt" timestamp DEFAULT now() NOT NULL
+        );
+      `);
+
       logger.info('✅ Neon PostgreSQL database schema successfully verified and synced!');
     } finally {
       client.release();

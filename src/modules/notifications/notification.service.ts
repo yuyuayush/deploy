@@ -32,28 +32,52 @@ export class NotificationService {
           (err instanceof Error ? err.message : String(err))
       );
 
-      let sql = 'SELECT * FROM "notification"';
-      const values: string[] = [];
-      if (recipientEmail) {
-        sql += ' WHERE "recipientEmail" = $1';
-        values.push(recipientEmail);
-      }
-      sql += ' ORDER BY "createdAt" DESC LIMIT 50';
+      try {
+        await pool.query(
+          'CREATE TABLE IF NOT EXISTS "notification" (' +
+            '"id" text PRIMARY KEY, ' +
+            '"recipientEmail" text NOT NULL, ' +
+            '"senderName" text NOT NULL, ' +
+            '"senderEmail" text, ' +
+            '"type" text NOT NULL, ' +
+            '"postId" text, ' +
+            '"postContent" text, ' +
+            '"message" text NOT NULL, ' +
+            '"read" boolean NOT NULL DEFAULT false, ' +
+            '"createdAt" timestamp NOT NULL DEFAULT NOW(), ' +
+            '"updatedAt" timestamp NOT NULL DEFAULT NOW()' +
+            ')'
+        );
 
-      const res = await pool.query(sql, values);
-      return res.rows.map((n) => ({
-        id: n.id,
-        recipientEmail: n.recipientEmail,
-        senderName: n.senderName,
-        senderEmail: n.senderEmail,
-        type: n.type,
-        postId: n.postId,
-        postContent: n.postContent,
-        message: n.message,
-        read: Boolean(n.read),
-        createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : new Date().toISOString(),
-        updatedAt: n.updatedAt ? new Date(n.updatedAt).toISOString() : new Date().toISOString(),
-      }));
+        let sql = 'SELECT * FROM "notification"';
+        const values: string[] = [];
+        if (recipientEmail) {
+          sql += ' WHERE "recipientEmail" = $1';
+          values.push(recipientEmail);
+        }
+        sql += ' ORDER BY "createdAt" DESC LIMIT 50';
+
+        const res = await pool.query(sql, values);
+        return res.rows.map((n) => ({
+          id: n.id,
+          recipientEmail: n.recipientEmail,
+          senderName: n.senderName,
+          senderEmail: n.senderEmail,
+          type: n.type,
+          postId: n.postId,
+          postContent: n.postContent,
+          message: n.message,
+          read: Boolean(n.read),
+          createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : new Date().toISOString(),
+          updatedAt: n.updatedAt ? new Date(n.updatedAt).toISOString() : new Date().toISOString(),
+        }));
+      } catch (poolErr) {
+        logger.error(
+          'Error executing pool query for notifications: ' +
+            (poolErr instanceof Error ? poolErr.message : String(poolErr))
+        );
+        return [];
+      }
     }
   }
 
