@@ -50,6 +50,13 @@ export const auth = betterAuth({
       ipAddressHeaders: ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip'],
       trustedProxies: ['127.0.0.1', '::1'],
     },
+    trustHost: true,
+    defaultCookieAttributes: {
+      sameSite: "none", // REQUIRED for cross-domain (Vercel <-> Render)
+      secure: true,     // REQUIRED when sameSite is "none"
+      httpOnly: true,
+      partitioned: true, // Opt-in to CHIPS (Cookies Having Independent Partitioned State) for modern browsers
+    },
   },
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
@@ -58,8 +65,8 @@ export const auth = betterAuth({
     'http://127.0.0.1:3000',
     ...(env.CORS_ORIGIN
       ? env.CORS_ORIGIN.split(',')
-          .map((o) => o.trim())
-          .filter(Boolean)
+        .map((o) => o.trim())
+        .filter(Boolean)
       : []),
   ],
 });
