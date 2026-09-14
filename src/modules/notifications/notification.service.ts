@@ -8,7 +8,11 @@ import { logger } from '../../utils/logger.js';
 export class NotificationService {
   public async getNotificationsForUser(recipientEmail?: string): Promise<NotificationItem[]> {
     try {
-      let query = db.select().from(notificationTable).orderBy(desc(notificationTable.createdAt)).limit(50);
+      let query = db
+        .select()
+        .from(notificationTable)
+        .orderBy(desc(notificationTable.createdAt))
+        .limit(50);
       let results;
       if (recipientEmail) {
         results = await db
@@ -163,9 +167,10 @@ export class NotificationService {
         'Falling back to pool update for markAsRead: ' +
           (err instanceof Error ? err.message : String(err))
       );
-      const res = await pool.query('UPDATE "notification" SET "read" = true, "updatedAt" = NOW() WHERE "id" = $1', [
-        id,
-      ]);
+      const res = await pool.query(
+        'UPDATE "notification" SET "read" = true, "updatedAt" = NOW() WHERE "id" = $1',
+        [id]
+      );
       if (res.rowCount === 0) {
         throw ApiError.notFound(`Notification '${id}' not found`);
       }

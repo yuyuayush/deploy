@@ -82,5 +82,3 @@ export const unsubscribe = pgTable('unsubscribe', {
   reason: text('reason'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
-
-

@@ -100,24 +100,36 @@ export async function enqueuePostLikeEmail(payload: PostLikeEmailInput): Promise
  * Enqueues a 1-minute delayed testing email background job to BullMQ,
  * with a 60-second setTimeout fallback when local Redis is offline.
  */
-export async function enqueueDelayedTestEmail(payload: WelcomeEmailInput, delayMs = 60000): Promise<void> {
+export async function enqueueDelayedTestEmail(
+  payload: WelcomeEmailInput,
+  delayMs = 60000
+): Promise<void> {
   const queue = getEmailQueue();
 
   if (queue) {
     try {
       await queue.add('send-delayed-test-email', payload, { delay: delayMs });
-      logger.info(`[BULLMQ DELAYED JOB] Enqueued 1-min delayed email for ${payload.email} (delay: ${delayMs}ms)`);
+      logger.info(
+        `[BULLMQ DELAYED JOB] Enqueued 1-min delayed email for ${payload.email} (delay: ${delayMs}ms)`
+      );
       return;
     } catch (err) {
-      logger.info(`[BULLMQ ENQUEUE NOTICE] Redis offline for delayed email. Using setTimeout fallback (${delayMs}ms).`);
+      logger.info(
+        `[BULLMQ ENQUEUE NOTICE] Redis offline for delayed email. Using setTimeout fallback (${delayMs}ms).`
+      );
     }
   }
 
   // Fallback 1-minute timer if local Redis is offline
-  logger.info(`[TIMER FALLBACK] Scheduled 1-minute (${delayMs / 1000}s) delayed email for ${payload.email}`);
+  logger.info(
+    `[TIMER FALLBACK] Scheduled 1-minute (${delayMs / 1000}s) delayed email for ${payload.email}`
+  );
   setTimeout(() => {
     directEmailService.sendDelayedTestEmail(payload).catch((err) => {
-      logger.error({ err }, `[TIMER FALLBACK ERROR] Failed sending delayed email to ${payload.email}`);
+      logger.error(
+        { err },
+        `[TIMER FALLBACK ERROR] Failed sending delayed email to ${payload.email}`
+      );
     });
   }, delayMs);
 }

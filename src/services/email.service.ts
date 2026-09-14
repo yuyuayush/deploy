@@ -40,7 +40,9 @@ export class EmailService {
       }
     } catch {
       try {
-        const res = await pool.query('SELECT 1 FROM "unsubscribe" WHERE "email" = $1', [normalized]);
+        const res = await pool.query('SELECT 1 FROM "unsubscribe" WHERE "email" = $1', [
+          normalized,
+        ]);
         if (res.rowCount && res.rowCount > 0) {
           unsubscribedSet.add(normalized);
           return true;
@@ -66,7 +68,12 @@ export class EmailService {
     try {
       await db
         .insert(unsubscribeTable)
-        .values({ id, email: normalized, reason: reason || 'User requested unsubscription', createdAt: now })
+        .values({
+          id,
+          email: normalized,
+          reason: reason || 'User requested unsubscription',
+          createdAt: now,
+        })
         .onConflictDoNothing();
       logger.info(`[UNSUBSCRIBE REGISTRY] Registered unsubscription for ${normalized}`);
       return true;
@@ -82,7 +89,9 @@ export class EmailService {
         logger.info(`[UNSUBSCRIBE REGISTRY] Registered unsubscription via pool for ${normalized}`);
         return true;
       } catch (err) {
-        logger.error(`[UNSUBSCRIBE REGISTRY ERROR] Failed to save unsubscription for ${normalized}: ${err}`);
+        logger.error(
+          `[UNSUBSCRIBE REGISTRY ERROR] Failed to save unsubscription for ${normalized}: ${err}`
+        );
       }
     }
     return true;
@@ -274,7 +283,9 @@ export class EmailService {
    */
   public async sendPostLikeEmail(input: PostLikeEmailInput): Promise<boolean> {
     if (await this.isUnsubscribed(input.recipientEmail)) {
-      logger.info(`[EMAIL SKIPPED] User ${input.recipientEmail} is unsubscribed. Skipping post like email.`);
+      logger.info(
+        `[EMAIL SKIPPED] User ${input.recipientEmail} is unsubscribed. Skipping post like email.`
+      );
       return false;
     }
 
@@ -327,7 +338,9 @@ export class EmailService {
    */
   public async sendDelayedTestEmail(input: WelcomeEmailInput): Promise<boolean> {
     if (await this.isUnsubscribed(input.email)) {
-      logger.info(`[EMAIL SKIPPED] User ${input.email} is unsubscribed. Skipping delayed test email.`);
+      logger.info(
+        `[EMAIL SKIPPED] User ${input.email} is unsubscribed. Skipping delayed test email.`
+      );
       return false;
     }
 
@@ -363,7 +376,9 @@ export class EmailService {
         logger.error(`[RESEND FAILURE] Resend API error: ${JSON.stringify(data)}`);
         throw new Error(`Resend API Error: ${JSON.stringify(data)}`);
       } catch (error: unknown) {
-        logger.error(`[RESEND ERROR] Failed to send delayed test email via Resend: ${String(error)}`);
+        logger.error(
+          `[RESEND ERROR] Failed to send delayed test email via Resend: ${String(error)}`
+        );
         throw error;
       }
     }

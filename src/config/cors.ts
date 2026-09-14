@@ -1,9 +1,10 @@
 import { CorsOptions } from 'cors';
 import { env } from './env.js';
 
-
 const configuredOrigins = env.CORS_ORIGIN
-  ? env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
+  ? env.CORS_ORIGIN.split(',')
+      .map((o) => o.trim())
+      .filter(Boolean)
   : [];
 
 export const allowedOrigins = Array.from(new Set([...configuredOrigins]));

@@ -25,12 +25,7 @@ export class NotificationController {
     try {
       const id = String(req.params.id);
       await notificationService.markAsRead(id);
-      ApiResponse.success(
-        res,
-        { id, read: true },
-        'Notification marked as read',
-        HttpStatus.OK
-      );
+      ApiResponse.success(res, { id, read: true }, 'Notification marked as read', HttpStatus.OK);
     } catch (error) {
       next(error);
     }

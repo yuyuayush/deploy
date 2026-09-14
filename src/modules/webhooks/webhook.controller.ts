@@ -23,7 +23,11 @@ export class WebhookController {
         `[WEBHOOK RECEIVED] Resend event '${type}' | Signature Header: ${svixSignature ? 'Present' : 'None'} | Secret configured: YES (${env.RESEND_WEBHOOK_SECRET ? 'whsec_***' : 'Missing'})`
       );
 
-      if (type === 'email.unsubscribed' || type === 'email.bounced' || type === 'email.complained') {
+      if (
+        type === 'email.unsubscribed' ||
+        type === 'email.bounced' ||
+        type === 'email.complained'
+      ) {
         let emailToUnsub: string | null = null;
         if (Array.isArray(data?.to) && data.to.length > 0) {
           emailToUnsub = data.to[0];
@@ -48,7 +52,11 @@ export class WebhookController {
   /**
    * HTTP GET Unsubscribe endpoint (handles direct link clicks from emails)
    */
-  public async handleUnsubscribeGet(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async handleUnsubscribeGet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const email = typeof req.query.email === 'string' ? req.query.email : undefined;
       if (!email) {
@@ -68,7 +76,11 @@ export class WebhookController {
   /**
    * HTTP POST Unsubscribe endpoint
    */
-  public async handleUnsubscribePost(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async handleUnsubscribePost(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const email = typeof req.body?.email === 'string' ? req.body.email : undefined;
       const reason = typeof req.body?.reason === 'string' ? req.body.reason : undefined;
@@ -121,7 +133,11 @@ export class WebhookController {
   /**
    * Check unsubscription status for an email
    */
-  public async checkUnsubscribeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async checkUnsubscribeStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const email = typeof req.query.email === 'string' ? req.query.email : undefined;
       if (!email) {

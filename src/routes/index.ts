@@ -17,4 +17,3 @@ router.use('/notifications', notificationRouter);
 router.use('/webhooks', webhookRouter);
 
 export const apiRouter = router;
-
