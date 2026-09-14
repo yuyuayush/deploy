@@ -4,6 +4,7 @@ import { userRouter } from '../modules/users/user.router.js';
 import { postRouter } from '../modules/posts/post.router.js';
 import { notificationRouter } from '../modules/notifications/notification.router.js';
 import { webhookRouter } from '../modules/webhooks/webhook.router.js';
+import { audienceRouter } from '../modules/audience/audience.router.js';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/users', userRouter);
 router.use('/posts', postRouter);
 router.use('/notifications', notificationRouter);
 router.use('/webhooks', webhookRouter);
+router.use('/audience', audienceRouter);
 
 export const apiRouter = router;

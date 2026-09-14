@@ -82,3 +82,24 @@ export const unsubscribe = pgTable('unsubscribe', {
   reason: text('reason'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
+
+export const subscriber = pgTable('subscriber', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name').notNull().default('Subscriber'),
+  frequency: text('frequency').notNull().default('daily'), // 'daily' | 'weekly'
+  status: text('status').notNull().default('active'), // 'active' | 'unsubscribed'
+  subscribedAt: timestamp('subscribedAt').notNull().defaultNow(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
+export const contactMessage = pgTable('contact_message', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('unread'), // 'unread' | 'read'
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});

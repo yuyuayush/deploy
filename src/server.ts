@@ -3,6 +3,7 @@ import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { runMigrations } from './db/migrate.js';
 import { initEmailWorker, closeEmailWorker } from './jobs/email.worker.js';
+import { initDailyQuoteCron } from './jobs/daily-quote.cron.js';
 
 const app = createApp();
 
@@ -16,6 +17,9 @@ const server = app.listen(env.PORT, async () => {
 
   // Initialize BullMQ Email Background Worker
   initEmailWorker();
+
+  // Initialize 8:00 AM Daily Motivational Quote Cron Job
+  initDailyQuoteCron();
 });
 
 // Graceful Shutdown handling
